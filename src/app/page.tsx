@@ -15,6 +15,13 @@ export default function Home() {
   const [result, setResult] = useState<EmotionResult | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // ข้อความตัวอย่างสำหรับกดทดสอบได้ทันที
+  const SAMPLE_TEXTS = [
+    "รู้สึกหน่วงๆ ไม่อยากคุยกับใคร แต่ก็ไม่อยากอยู่คนเดียว",
+    "เหนื่อยกับงานมาก รู้สึกทำดีแค่ไหนก็ไม่มีใครเห็นค่า",
+    "ใจสั่น กังวลกับเรื่องที่ยังมาไม่ถึงตลอดเวลา",
+  ];
+
   // ฟังก์ชันยิงข้อมูลไปหา API หลังบ้าน
   const handleAnalyze = async () => {
     if (!inputText.trim()) return;
@@ -29,14 +36,19 @@ export default function Home() {
         body: JSON.stringify({ text: inputText }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+        throw new Error(data.error || "เกิดข้อผิดพลาดในการเชื่อมต่อ");
       }
 
-      const data: EmotionResult = await response.json();
       setResult(data);
     } catch (err) {
-      setErrorMsg("ไม่สามารถวิเคราะห์ได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง");
+      if (err instanceof Error) {
+        setErrorMsg(err.message);
+      } else {
+        setErrorMsg("ไม่สามารถวิเคราะห์ได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -95,6 +107,25 @@ export default function Home() {
                 />
               </div>
 
+              {/* แถบกดข้อความตัวอย่าง */}
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-neutral-500">
+                  หรือลองแตะข้อความตัวอย่าง:
+                </span>
+                <div className="flex flex-col gap-1.5">
+                  {SAMPLE_TEXTS.map((sample, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setInputText(sample)}
+                      className="text-left text-xs bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-neutral-200 px-3 py-2 rounded-xl transition active:scale-[0.99] cursor-pointer"
+                    >
+                      &ldquo;{sample}&rdquo;
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {errorMsg && (
                 <p className="text-xs text-rose-400 text-center">{errorMsg}</p>
               )}
@@ -121,31 +152,11 @@ export default function Home() {
                 color={activeEmotion?.color || "#14B8A6"}
               />
 
-              {/* การ์ด: สิ่งที่ซ่อนอยู่เบื้องลึก */}
-              <div className="bg-neutral-900 border border-neutral-800/80 rounded-2xl p-4">
-                <h2 className="text-xs text-neutral-400 font-medium mb-1.5">
-                  สาเหตุเบื้องลึก
-                </h2>
-                <p className="text-sm text-neutral-200 leading-relaxed">
-                  {result.underlying_cause}
-                </p>
-              </div>
-
               {/* การ์ด 9:16 สำหรับแชร์ลง Story พร้อมปุ่มแชร์ */}
               <ShareCard
                 result={result}
                 color={activeEmotion?.color || "#14B8A6"}
               />
-
-              {/* การ์ด: สิ่งที่ทำได้ทันที */}
-              <div className="bg-neutral-900 border border-neutral-800/80 rounded-2xl p-4">
-                <h2 className="text-xs text-neutral-400 font-medium mb-1.5">
-                  คำแนะนำเล็กๆ ใน 5 นาที
-                </h2>
-                <p className="text-sm text-neutral-200 leading-relaxed">
-                  {result.micro_action}
-                </p>
-              </div>
 
               <button
                 onClick={handleReset}
