@@ -3,8 +3,8 @@
 
 import { useRef, useState } from "react";
 import { EmotionResult } from "@/types/emotion";
-import { toPng, toBlob } from "html-to-image";
-import { Share2, Download, Check } from "lucide-react";
+import { toPng } from "html-to-image";
+import { Download } from "lucide-react";
 
 interface ShareCardProps {
   result: EmotionResult;
@@ -15,7 +15,6 @@ export default function ShareCard({ result, color }: ShareCardProps) {
   // สร้างตัวอ้างอิง (Ref) เพื่อบอกให้ html-to-image รู้ว่าจะแคปกล่องไหน
   const cardRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
 
   // 1. ฟังก์ชันดาวน์โหลดเป็นไฟล์รูปภาพ (.png)
   const handleDownloadImage = async () => {
@@ -32,45 +31,6 @@ export default function ShareCard({ result, color }: ShareCardProps) {
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการสร้างรูป:", error);
       alert("ไม่สามารถบันทึกรูปภาพได้ในขณะนี้");
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  // 2. ฟังก์ชันแชร์ผ่าน Web Share API บนมือถือ (iOS / Android)
-  const handleNativeShare = async () => {
-    if (!cardRef.current) return;
-    setIsExporting(true);
-
-    try {
-      // แปลงการ์ดเป็น Blob File
-      const blob = await toBlob(cardRef.current);
-      if (!blob) throw new Error("สร้าง Blob ไม่สำเร็จ");
-
-      const file = new File([blob], "emotion-result.png", {
-        type: "image/png",
-      });
-
-      // ตรวจสอบว่าเบราว์เซอร์รองรับการแชร์ไฟล์ภาพไหม
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: "Emotion Decoder",
-          text: `วันนี้ฉันรู้สึก "${result.layer_3_specific}" ถอดรหัสเบื้องลึกโดย Emotion Decoder`,
-          files: [file],
-        });
-      } else if (navigator.share) {
-        // ถ้ารองรับแชร์แต่แชร์รูปไม่ได้ ให้แชร์เป็นข้อความแทน
-        await navigator.share({
-          title: "Emotion Decoder",
-          text: `วันนี้ฉันรู้สึก "${result.layer_3_specific}" (${result.layer_1_core} → ${result.layer_2_secondary})`,
-          url: window.location.href,
-        });
-      } else {
-        // หากเปิดบนคอมพิวเตอร์ที่ไม่รองรับ Web Share ให้ดาวน์โหลดรูปแทน
-        handleDownloadImage();
-      }
-    } catch (error) {
-      console.log("ยกเลิกการแชร์ หรือแชร์ไม่สำเร็จ:", error);
     } finally {
       setIsExporting(false);
     }
@@ -143,24 +103,17 @@ export default function ShareCard({ result, color }: ShareCardProps) {
         </div>
       </div>
 
-      {/* ================= ปุ่มกด Action (Share & Save) ================= */}
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          onClick={handleNativeShare}
-          disabled={isExporting}
-          className="py-3 px-4 rounded-xl bg-neutral-100 text-neutral-950 font-medium text-xs flex items-center justify-center gap-2 hover:bg-neutral-200 active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
-        >
-          <Share2 className="w-4 h-4" />
-          <span>{isExporting ? "กำลังสร้างภาพ..." : "แชร์ลง Story / App"}</span>
-        </button>
-
+      {/* ================= ปุ่มกดดาวน์โหลดรูปภาพ ================= */}
+      <div>
         <button
           onClick={handleDownloadImage}
           disabled={isExporting}
-          className="py-3 px-4 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-200 font-medium text-xs flex items-center justify-center gap-2 hover:bg-neutral-800 active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
+          className="w-full py-3.5 px-4 rounded-xl bg-neutral-100 text-neutral-950 font-medium text-sm flex items-center justify-center gap-2 hover:bg-neutral-200 active:scale-[0.98] transition cursor-pointer disabled:opacity-50 shadow-md"
         >
           <Download className="w-4 h-4" />
-          <span>บันทึกรูป PNG</span>
+          <span>
+            {isExporting ? "กำลังบันทึกรูป..." : "บันทึกการ์ดรูปภาพ (PNG)"}
+          </span>
         </button>
       </div>
     </div>
