@@ -5,6 +5,9 @@ import { useState } from "react";
 import { EmotionResult } from "@/types/emotion";
 import { CORE_EMOTIONS, CoreEmotionType } from "@/constants/emotionsData";
 import { Sparkles, ArrowRight, RotateCcw } from "lucide-react";
+import WheelSlice from "@/components/visualizer/WheelSlice";
+import ShareCard from "@/components/result/ShareCard";
+import AtmosphericBg from "@/components/visualizer/AtmosphericBg";
 
 export default function Home() {
   const [inputText, setInputText] = useState("");
@@ -52,6 +55,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-neutral-950 text-neutral-100 flex justify-center p-4">
+      {/* แสงฟุ้งเปลี่ยนสีตามอารมณ์ */}
+      <AtmosphericBg color={activeEmotion?.color || "#525252"} />
       {/* จำกัดขนาดหน้าจอให้พอดีมือถือ (Mobile-First Frame) */}
       <div className="w-full max-w-md flex flex-col justify-between py-6">
         {/* 1. ส่วนหัว (Header) */}
@@ -108,27 +113,13 @@ export default function Home() {
           {/* สเต็ปที่ 3: หน้าแสดงผลลัพธ์ (Result State) */}
           {!isLoading && result && (
             <div className="space-y-4">
-              {/* แถบลำดับอารมณ์ 3 ชั้น */}
-              <div
-                className={`p-4 rounded-2xl border ${activeEmotion?.bgClass || "bg-neutral-900 border-neutral-800"}`}
-              >
-                <p className="text-xs uppercase tracking-wider text-neutral-400 mb-2">
-                  เส้นทางอารมณ์ของคุณ
-                </p>
-                <div className="flex flex-wrap items-center gap-1.5 text-sm font-semibold">
-                  <span className="px-2.5 py-1 rounded-lg bg-neutral-950/60">
-                    {result.layer_1_core}
-                  </span>
-                  <span className="text-neutral-500">→</span>
-                  <span className="px-2.5 py-1 rounded-lg bg-neutral-950/60">
-                    {result.layer_2_secondary}
-                  </span>
-                  <span className="text-neutral-500">→</span>
-                  <span className="px-2.5 py-1 rounded-lg bg-neutral-950/90 text-white underline underline-offset-4 decoration-white/40">
-                    {result.layer_3_specific}
-                  </span>
-                </div>
-              </div>
+              {/* แสดงกราฟิกวงล้ออารมณ์ 3 ชั้น */}
+              <WheelSlice
+                core={result.layer_1_core}
+                secondary={result.layer_2_secondary}
+                specific={result.layer_3_specific}
+                color={activeEmotion?.color || "#14B8A6"}
+              />
 
               {/* การ์ด: สิ่งที่ซ่อนอยู่เบื้องลึก */}
               <div className="bg-neutral-900 border border-neutral-800/80 rounded-2xl p-4">
@@ -139,6 +130,12 @@ export default function Home() {
                   {result.underlying_cause}
                 </p>
               </div>
+
+              {/* การ์ด 9:16 สำหรับแชร์ลง Story พร้อมปุ่มแชร์ */}
+              <ShareCard
+                result={result}
+                color={activeEmotion?.color || "#14B8A6"}
+              />
 
               {/* การ์ด: สิ่งที่ทำได้ทันที */}
               <div className="bg-neutral-900 border border-neutral-800/80 rounded-2xl p-4">
