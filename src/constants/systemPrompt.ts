@@ -1,3 +1,4 @@
+// src\constants\systemPrompt.ts
 import { Type } from "@google/genai";
 
 export const SYSTEM_INSTRUCTION = `

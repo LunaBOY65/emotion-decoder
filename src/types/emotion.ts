@@ -1,3 +1,4 @@
+// src\types\emotion.ts
 // TypeScript Interfaces สำหรับ Request / Response
 
 export interface EmotionResult {

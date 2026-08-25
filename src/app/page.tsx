@@ -1,13 +1,15 @@
+//src\app\page.tsx
 // Main Container (State: Input -> Loading -> Result)
 "use client";
 
 import { useState } from "react";
 import { EmotionResult } from "@/types/emotion";
 import { CORE_EMOTIONS, CoreEmotionType } from "@/constants/emotionsData";
-import { Sparkles, ArrowRight, RotateCcw } from "lucide-react";
+import { X, ArrowRight, RotateCcw } from "lucide-react";
 import WheelSlice from "@/components/visualizer/WheelSlice";
 import ShareCard from "@/components/result/ShareCard";
 import AtmosphericBg from "@/components/visualizer/AtmosphericBg";
+import MoodFace from "@/components/visualizer/MoodFace";
 
 export default function Home() {
   const [inputText, setInputText] = useState("");
@@ -66,19 +68,28 @@ export default function Home() {
     : null;
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-neutral-100 flex justify-center p-4">
-      {/* แสงฟุ้งเปลี่ยนสีตามอารมณ์ */}
-      <AtmosphericBg color={activeEmotion?.color || "#525252"} />
+    <main className="min-h-screen text-neutral-800 flex justify-center p-4 relative">
+      {/* พื้นหลังเปลี่ยนสีตามอารมณ์ (ถ้าหน้าแรกให้ใช้สีขาวอมเทา #F9FAFB) */}
+      <AtmosphericBg color={activeEmotion?.color || "#F9FAFB"} />
       {/* จำกัดขนาดหน้าจอให้พอดีมือถือ (Mobile-First Frame) */}
       <div className="w-full max-w-md flex flex-col justify-between py-6">
         {/* 1. ส่วนหัว (Header) */}
-        <header className="text-center mb-6">
-          <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-neutral-200 to-neutral-500 bg-clip-text text-transparent">
-            Emotion Decoder
+        <header className="flex items-center justify-between mb-6 pt-4">
+          {result ? (
+            <button
+              onClick={handleReset}
+              aria-label="ปิด"
+              className="w-8 h-8 flex items-center justify-center text-neutral-700/70 hover:text-neutral-900 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          ) : (
+            <span className="w-8" /> // เว้นที่ว่างไว้ให้ชื่ออยู่กึ่งกลางเสมอ
+          )}
+          <h1 className="text-sm font-semibold tracking-tight text-neutral-800/80">
+            Current Mood
           </h1>
-          <p className="text-xs text-neutral-400 mt-1">
-            ถอดรหัสความรู้สึกที่อธิบายไม่ถูก (ไม่มีการบันทึกข้อมูล)
-          </p>
+          <span className="w-8" />
         </header>
 
         {/* 2. เนื้อหาหลักตามสถานะ */}
@@ -86,64 +97,96 @@ export default function Home() {
           {/* สเต็ปที่ 1: กำลังโหลด (Loading State) */}
           {isLoading && (
             <div className="text-center space-y-4 animate-pulse">
-              <div className="w-16 h-16 mx-auto rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center">
-                <Sparkles className="w-8 h-8 text-neutral-400 animate-spin" />
-              </div>
-              <p className="text-sm text-neutral-400">
-                กำลังแยกแยะความรู้สึกของคุณ...
+              <MoodFace
+                mouth="think"
+                size={72}
+                className="text-neutral-700 mx-auto"
+              />
+              <p className="text-sm text-neutral-600 font-medium">
+                กำลังตั้งใจฟังความรู้สึกของคุณ...
               </p>
             </div>
           )}
 
-          {/* สเต็ปที่ 2: หน้าพิมพ์ข้อความ (Input State) */}
           {!isLoading && !result && (
-            <div className="space-y-4">
-              <div className="bg-neutral-900/80 border border-neutral-800 rounded-2xl p-4 focus-within:border-neutral-600 transition">
-                <textarea
-                  className="w-full h-44 bg-transparent resize-none outline-none text-neutral-200 text-sm leading-relaxed placeholder:text-neutral-600"
-                  placeholder="พิมพ์อะไรก็ได้ที่อยู่ในหัวตอนนี้... ไม่ต้องเรียบเรียง เช่น 'รู้สึกหน่วงๆ ไม่อยากคุยกับใคร แต่ก็ไม่อยากอยู่คนเดียว'"
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
+            <div className="flex flex-col h-full pb-4">
+              {/* คาแรกเตอร์คอยฟังอยู่ด้านบน ทำให้แอปดูมีชีวิตชีวา ไม่ใช่แค่กล่องขาวๆ */}
+              <div className="flex flex-col items-center text-center mt-2 mb-8">
+                <MoodFace
+                  mouth="smile"
+                  size={72}
+                  className="text-neutral-800 mb-4"
                 />
+                <h2 className="text-2xl font-black tracking-tight text-neutral-900">
+                  วันนี้เป็นอย่างไรบ้าง?
+                </h2>
               </div>
 
-              {/* แถบกดข้อความตัวอย่าง */}
-              <div className="space-y-1.5">
-                <span className="text-[11px] text-neutral-500">
-                  หรือลองแตะข้อความตัวอย่าง:
+              <div className="flex-1" />
+
+              {/* แถบข้อความตัวอย่าง (ทำเป็นปุ่มมนๆ วางซ้อนกัน) */}
+              <div className="mb-6 space-y-3">
+                <span className="text-[12px] text-neutral-600 font-medium">
+                  ลองแตะข้อความตัวอย่าง:
                 </span>
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   {SAMPLE_TEXTS.map((sample, idx) => (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => setInputText(sample)}
-                      className="text-left text-xs bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-neutral-200 px-3 py-2 rounded-xl transition active:scale-[0.99] cursor-pointer"
+                      className="text-left text-xs bg-white border border-neutral-200 hover:border-neutral-400 text-neutral-700 px-4 py-2.5 rounded-full transition active:scale-95 cursor-pointer"
                     >
-                      &ldquo;{sample}&rdquo;
+                      {sample}
                     </button>
                   ))}
                 </div>
               </div>
 
               {errorMsg && (
-                <p className="text-xs text-rose-400 text-center">{errorMsg}</p>
+                <p className="text-xs text-red-500 text-center mb-2">
+                  {errorMsg}
+                </p>
               )}
 
-              <button
-                onClick={handleAnalyze}
-                disabled={!inputText.trim()}
-                className="w-full py-3.5 bg-neutral-100 text-neutral-950 font-medium rounded-xl flex items-center justify-center gap-2 disabled:opacity-30 active:scale-[0.98] transition cursor-pointer"
-              >
-                <span>ถอดรหัสความรู้สึก</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* กล่องพิมพ์ข้อความสไตล์แชท มีปุ่มส่งกลมๆ ซ่อนอยู่ข้างในขวา */}
+              <div className="bg-white rounded-3xl p-2 pr-2 shadow-sm border border-neutral-200 flex items-end focus-within:border-neutral-400 transition">
+                <textarea
+                  className="w-full bg-transparent resize-none outline-none text-neutral-800 text-sm px-4 py-3 max-h-32 placeholder:text-neutral-400"
+                  rows={2}
+                  placeholder="พิมพ์ระบายความรู้สึกที่นี่..."
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                />
+
+                {/* ปุ่มส่งข้อความแบบไอคอนกลมเล็กๆ */}
+                <button
+                  onClick={handleAnalyze}
+                  disabled={!inputText.trim()}
+                  className="w-11 h-11 mb-1 shrink-0 bg-neutral-900 text-white rounded-full flex items-center justify-center disabled:opacity-30 disabled:bg-neutral-400 transition active:scale-95 cursor-pointer"
+                >
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           )}
 
           {/* สเต็ปที่ 3: หน้าแสดงผลลัพธ์ (Result State) */}
           {!isLoading && result && (
             <div className="space-y-4">
+              {/* หน้า + ชื่ออารมณ์หลัก ตัวใหญ่ชัดเจน แบบเดียวกับการ์ดต้นแบบ */}
+              <div className="flex flex-col items-center text-center py-2">
+                <MoodFace
+                  mouth={activeEmotion?.mouth ?? "smile"}
+                  angry={activeEmotion?.angry}
+                  size={96}
+                  className="text-neutral-900 mb-3"
+                />
+                <h2 className="text-3xl font-black tracking-tight text-neutral-900">
+                  {result.layer_1_core}
+                </h2>
+              </div>
+
               {/* แสดงกราฟิกวงล้ออารมณ์ 3 ชั้น */}
               <WheelSlice
                 core={result.layer_1_core}
@@ -170,8 +213,8 @@ export default function Home() {
         </div>
 
         {/* 3. ส่วนท้าย (Footer) */}
-        <footer className="text-center text-[10px] text-neutral-600 mt-6">
-          Powered by Gemini API • Stateless Privacy
+        <footer className="text-center text-[10px] text-neutral-500 mt-6 pb-2">
+          เราไม่เก็บข้อมูลของคุณ สบายใจได้นะ 🤍
         </footer>
       </div>
     </main>

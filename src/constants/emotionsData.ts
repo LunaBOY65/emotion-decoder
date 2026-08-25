@@ -1,34 +1,49 @@
+// src\constants\emotionsData.ts
 // Taxonomy อารมณ์ทั้งหมดจาก Wheel of Emotions (3 ชั้น)
 
-// รายชื่ออารมณ์หลัก 7 กลุ่มตามภาพวงล้อ พร้อมโทนสีประจำอารมณ์
+// รายชื่ออารมณ์หลัก 7 กลุ่ม พร้อมสีพาสเทลและไอคอนใบหน้า
 export const CORE_EMOTIONS = {
   สุข: {
-    color: "#FACC15",
-    bgClass: "bg-amber-500/10 border-amber-500/30 text-amber-300",
+    color: "#FDE047", // สีเหลืองพาสเทล
+    bgClass: "bg-[#FDE047] text-neutral-900",
+    mouth: "smile",
+    angry: false,
   },
   ทุกข์: {
-    color: "#14B8A6",
-    bgClass: "bg-teal-500/10 border-teal-500/30 text-teal-300",
+    color: "#99F6E4", // สีเขียวมิ้นต์พาสเทล
+    bgClass: "bg-[#99F6E4] text-neutral-900",
+    mouth: "flat",
+    angry: false,
   },
   กลัว: {
-    color: "#FB923C",
-    bgClass: "bg-orange-500/10 border-orange-500/30 text-orange-300",
+    color: "#DDD6FE", // สีม่วงพาสเทล
+    bgClass: "bg-[#DDD6FE] text-neutral-900",
+    mouth: "wavy",
+    angry: false,
   },
   โกรธ: {
-    color: "#EF4444",
-    bgClass: "bg-red-500/10 border-red-500/30 text-red-300",
+    color: "#FDA4AF", // สีแดง/ชมพูพาสเทล
+    bgClass: "bg-[#FDA4AF] text-neutral-900",
+    mouth: "frown",
+    angry: true,
   },
   รังเกียจ: {
-    color: "#22C55E",
-    bgClass: "bg-emerald-500/10 border-emerald-500/30 text-emerald-300",
+    color: "#86EFAC", // สีเขียวพาสเทล
+    bgClass: "bg-[#86EFAC] text-neutral-900",
+    mouth: "zigzag",
+    angry: false,
   },
   เสียใจ: {
-    color: "#6EE7B7",
-    bgClass: "bg-teal-400/10 border-teal-400/30 text-teal-200",
+    color: "#BAE6FD", // สีฟ้าพาสเทล
+    bgClass: "bg-[#BAE6FD] text-neutral-900",
+    mouth: "frown",
+    angry: false,
   },
   ประหลาดใจ: {
-    color: "#A855F7",
-    bgClass: "bg-purple-500/10 border-purple-500/30 text-purple-300",
+    color: "#FDBA74", // สีส้มพาสเทล
+    bgClass: "bg-[#FDBA74] text-neutral-900",
+    mouth: "open",
+    angry: false,
   },
 } as const;
 

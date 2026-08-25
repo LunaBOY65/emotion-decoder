@@ -63,12 +63,12 @@ export default function WheelSlice({
 
         {/* จุดกึ่งกลางแสดงชื่ออารมณ์หลัก */}
         <div className="absolute text-center">
-          <span className="text-xs text-neutral-400 block font-light">
+          {/* <span className="text-xs text-neutral-400 block font-light">
             แกนอารมณ์
           </span>
           <span className="text-base font-bold text-white tracking-wide">
             {core}
-          </span>
+          </span> */}
         </div>
       </div>
 

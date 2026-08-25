@@ -1,3 +1,4 @@
+// src\app\api\analyze\route.ts
 // Serverless route เชื่อมต่อ Gemini API (Structured JSON)
 
 import { GoogleGenAI } from "@google/genai";
