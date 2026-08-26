@@ -6,7 +6,6 @@ import { useState } from "react";
 import { EmotionResult } from "@/types/emotion";
 import { CORE_EMOTIONS, CoreEmotionType } from "@/constants/emotionsData";
 import { X, ArrowRight, RotateCcw } from "lucide-react";
-import WheelSlice from "@/components/visualizer/WheelSlice";
 import ShareCard from "@/components/result/ShareCard";
 import AtmosphericBg from "@/components/visualizer/AtmosphericBg";
 import MoodFace from "@/components/visualizer/MoodFace";
@@ -96,9 +95,6 @@ export default function Home() {
           ) : (
             <span className="w-8" /> // เว้นที่ว่างไว้ให้ชื่ออยู่กึ่งกลางเสมอ
           )}
-          <h1 className="text-sm font-semibold tracking-tight text-neutral-800/80">
-            Current Mood
-          </h1>
           <span className="w-8" />
         </header>
 
@@ -128,7 +124,7 @@ export default function Home() {
                   className="text-neutral-800 mb-4"
                 /> */}
                 <h2 className="text-2xl font-black tracking-tight text-neutral-900">
-                  วันนี้เป็นอย่างไรบ้าง?
+                  วันนี้คุณรู้สึกอย่างไร?
                 </h2>
               </div>
 
@@ -183,46 +179,24 @@ export default function Home() {
 
           {/* สเต็ปที่ 3: หน้าแสดงผลลัพธ์ (Result State) */}
           {!isLoading && result && (
-            <div className="space-y-5">
-              {/* หัวข้อหลัก: หน้า + ชื่ออารมณ์ */}
-              <div className="flex flex-col items-center text-center pt-1 pb-1">
-                <MoodFace
+            <div className="flex flex-col h-full items-center justify-center space-y-8 animate-in fade-in zoom-in-95 duration-500">
+              {/* ใช้ ShareCard เป็นตัวแสดงผลหลักตัวเดียวจบ */}
+              <div className="w-full">
+                <ShareCard
+                  result={result}
+                  color={activeEmotion?.color || "#14B8A6"}
                   mouth={activeEmotion?.mouth ?? "smile"}
                   angry={activeEmotion?.angry}
-                  size={88}
-                  className="text-neutral-900 mb-2"
                 />
-                <h2 className="text-2xl font-black tracking-tight text-neutral-900">
-                  {result.layer_1_core}
-                </h2>
-                <p className="text-xs text-neutral-500 mt-1">
-                  {result.layer_2_secondary}
-                </p>
               </div>
 
-              {/* ชั้นอารมณ์ 3 ชั้น */}
-              <WheelSlice
-                core={result.layer_1_core}
-                secondary={result.layer_2_secondary}
-                specific={result.layer_3_specific}
-                color={activeEmotion?.color || "#14B8A6"}
-              />
-
-              {/* การ์ดแชร์ 9:16 */}
-              <ShareCard
-                result={result}
-                color={activeEmotion?.color || "#14B8A6"}
-                mouth={activeEmotion?.mouth ?? "smile"}
-                angry={activeEmotion?.angry}
-              />
-
-              {/* ปุ่มรีเซ็ต */}
+              {/* ปุ่มรีเซ็ต ปรับสีให้ดูซอฟต์ลงเป็นปุ่มรอง (Secondary Button) ไม่แย่งซีนปุ่มดาวน์โหลดรูป */}
               <button
                 onClick={handleReset}
-                className="w-full py-3.5 bg-neutral-900 text-neutral-200 text-sm font-medium rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-800 active:scale-[0.98] transition cursor-pointer"
+                className="w-full max-w-[300px] py-3.5 bg-white border border-neutral-200 text-neutral-600 text-sm font-medium rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-50 active:scale-[0.98] transition shadow-sm cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
-                <span>วิเคราะห์ความรู้สึกอื่น</span>
+                <span>เริ่มวิเคราะห์ใหม่อีกครั้ง</span>
               </button>
             </div>
           )}

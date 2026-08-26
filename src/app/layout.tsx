@@ -11,7 +11,7 @@ const notoSansThai = Noto_Sans_Thai({
 });
 
 export const metadata: Metadata = {
-  title: "Current Mood | วันนี้คุณรู้สึกอย่างไร?",
+  title: "Current Mood",
   description: "ถอดรหัสความรู้สึกที่ไม่รู้จะอธิบายอย่างไร",
 };
 

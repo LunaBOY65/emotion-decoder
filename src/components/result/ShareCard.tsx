@@ -56,7 +56,7 @@ export default function ShareCard({
           {/* ส่วนหัวของการ์ด */}
           <div className="relative z-10 flex items-center justify-between">
             <span className="text-[11px] font-bold tracking-widest uppercase text-neutral-900/60">
-              Emotion Decoder
+              วันนี้คุณรู้สึกอย่างไร?
             </span>
             <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-neutral-900/10 text-neutral-900">
               {result.layer_1_core}
