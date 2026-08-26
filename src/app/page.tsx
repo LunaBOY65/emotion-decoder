@@ -44,6 +44,16 @@ export default function Home() {
         throw new Error(data.error || "เกิดข้อผิดพลาดในการเชื่อมต่อ");
       }
 
+      if (data && data.layer_1_core) {
+        const matchedKey = Object.keys(CORE_EMOTIONS).find((key) =>
+          data.layer_1_core.includes(key),
+        ) as CoreEmotionType;
+
+        if (matchedKey) {
+          data.layer_1_core = matchedKey; // แก้ที่ data ได้เลยเพราะยังไม่ลง State
+        }
+      }
+
       setResult(data);
     } catch (err) {
       if (err instanceof Error) {
@@ -173,21 +183,24 @@ export default function Home() {
 
           {/* สเต็ปที่ 3: หน้าแสดงผลลัพธ์ (Result State) */}
           {!isLoading && result && (
-            <div className="space-y-4">
-              {/* หน้า + ชื่ออารมณ์หลัก ตัวใหญ่ชัดเจน แบบเดียวกับการ์ดต้นแบบ */}
-              <div className="flex flex-col items-center text-center py-2">
+            <div className="space-y-5">
+              {/* หัวข้อหลัก: หน้า + ชื่ออารมณ์ */}
+              <div className="flex flex-col items-center text-center pt-1 pb-1">
                 <MoodFace
                   mouth={activeEmotion?.mouth ?? "smile"}
                   angry={activeEmotion?.angry}
-                  size={96}
-                  className="text-neutral-900 mb-3"
+                  size={88}
+                  className="text-neutral-900 mb-2"
                 />
-                <h2 className="text-3xl font-black tracking-tight text-neutral-900">
+                <h2 className="text-2xl font-black tracking-tight text-neutral-900">
                   {result.layer_1_core}
                 </h2>
+                <p className="text-xs text-neutral-500 mt-1">
+                  {result.layer_2_secondary}
+                </p>
               </div>
 
-              {/* แสดงกราฟิกวงล้ออารมณ์ 3 ชั้น */}
+              {/* ชั้นอารมณ์ 3 ชั้น */}
               <WheelSlice
                 core={result.layer_1_core}
                 secondary={result.layer_2_secondary}
@@ -195,7 +208,7 @@ export default function Home() {
                 color={activeEmotion?.color || "#14B8A6"}
               />
 
-              {/* การ์ด 9:16 สำหรับแชร์ลง Story พร้อมปุ่มแชร์ */}
+              {/* การ์ดแชร์ 9:16 */}
               <ShareCard
                 result={result}
                 color={activeEmotion?.color || "#14B8A6"}
@@ -203,9 +216,10 @@ export default function Home() {
                 angry={activeEmotion?.angry}
               />
 
+              {/* ปุ่มรีเซ็ต */}
               <button
                 onClick={handleReset}
-                className="w-full py-3 bg-neutral-900 border border-neutral-800 text-neutral-300 text-sm font-medium rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-800 active:scale-[0.98] transition cursor-pointer"
+                className="w-full py-3.5 bg-neutral-900 text-neutral-200 text-sm font-medium rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-800 active:scale-[0.98] transition cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>วิเคราะห์ความรู้สึกอื่น</span>

@@ -50,7 +50,7 @@ export default function ShareCard({
       <div className="flex justify-center">
         <div
           ref={cardRef}
-          className="w-full max-w-[320px] aspect-[9/16] rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden"
+          className="w-full max-w-[300px] aspect-[9/16] rounded-3xl p-5 flex flex-col justify-between relative overflow-hidden"
           style={{ backgroundColor: color }}
         >
           {/* ส่วนหัวของการ์ด */}
@@ -68,7 +68,7 @@ export default function ShareCard({
             <MoodFace
               mouth={mouth}
               angry={angry}
-              size={56}
+              size={48}
               className="text-neutral-900"
             />
 
@@ -76,7 +76,7 @@ export default function ShareCard({
               {result.layer_1_core} → {result.layer_2_secondary}
             </div>
 
-            <h3 className="text-2xl font-black text-neutral-900 leading-tight">
+            <h3 className="text-xl font-black text-neutral-900 leading-snug">
               &ldquo;{result.layer_3_specific}&rdquo;
             </h3>
 
@@ -110,7 +110,7 @@ export default function ShareCard({
         <button
           onClick={handleDownloadImage}
           disabled={isExporting}
-          className="w-full py-3.5 px-4 rounded-xl bg-neutral-900 text-white font-medium text-sm flex items-center justify-center gap-2 hover:bg-neutral-800 active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
+          className="w-full py-3.5 rounded-xl bg-neutral-900 text-white font-medium text-sm flex items-center justify-center gap-2 hover:bg-neutral-800 active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
         >
           <Download className="w-4 h-4" />
           <span>
