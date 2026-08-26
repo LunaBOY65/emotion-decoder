@@ -2,7 +2,7 @@
 // หน้าตาคาแรกเตอร์เส้นเรียบง่าย ใช้แทนอิโมจิ ให้แอปมีสไตล์เป็นของตัวเอง
 "use client";
 
-type MouthType =
+export type MouthType =
   | "smile"
   | "frown"
   | "open"

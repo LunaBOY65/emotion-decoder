@@ -112,11 +112,11 @@ export default function Home() {
             <div className="flex flex-col h-full pb-4">
               {/* คาแรกเตอร์คอยฟังอยู่ด้านบน ทำให้แอปดูมีชีวิตชีวา ไม่ใช่แค่กล่องขาวๆ */}
               <div className="flex flex-col items-center text-center mt-2 mb-8">
-                <MoodFace
+                {/* <MoodFace
                   mouth="smile"
                   size={72}
                   className="text-neutral-800 mb-4"
-                />
+                /> */}
                 <h2 className="text-2xl font-black tracking-tight text-neutral-900">
                   วันนี้เป็นอย่างไรบ้าง?
                 </h2>
@@ -199,6 +199,8 @@ export default function Home() {
               <ShareCard
                 result={result}
                 color={activeEmotion?.color || "#14B8A6"}
+                mouth={activeEmotion?.mouth ?? "smile"}
+                angry={activeEmotion?.angry}
               />
 
               <button
