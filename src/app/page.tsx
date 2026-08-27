@@ -2,13 +2,14 @@
 // Main Container (State: Input -> Loading -> Result)
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EmotionResult } from "@/types/emotion";
 import { CORE_EMOTIONS, CoreEmotionType } from "@/constants/emotionsData";
-import { X, ArrowRight, RotateCcw } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import ShareCard from "@/components/result/ShareCard";
 import AtmosphericBg from "@/components/visualizer/AtmosphericBg";
 import MoodFace from "@/components/visualizer/MoodFace";
+import { ALL_SAMPLES } from "@/constants/sampleTexts";
 
 export default function Home() {
   const [inputText, setInputText] = useState("");
@@ -16,12 +17,22 @@ export default function Home() {
   const [result, setResult] = useState<EmotionResult | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // ข้อความตัวอย่างสำหรับกดทดสอบได้ทันที
-  const SAMPLE_TEXTS = [
-    "รู้สึกหน่วงๆ ไม่อยากคุยกับใคร แต่ก็ไม่อยากอยู่คนเดียว",
-    "เหนื่อยกับงานมาก รู้สึกทำดีแค่ไหนก็ไม่มีใครเห็นค่า",
-    "ใจสั่น กังวลกับเรื่องที่ยังมาไม่ถึงตลอดเวลา",
-  ];
+  // กำหนดเป็นค่าว่างไว้ก่อน
+  const [randomSamples, setRandomSamples] = useState<string[]>([]);
+  const [isMounted, setIsMounted] = useState(false); // เอาไว้เช็คว่าสุ่มเสร็จหรือยัง
+
+  // สุ่มข้อความเมื่อหน้าเว็บโหลดเสร็จ
+  useEffect(() => {
+    // ครอบด้วย setTimeout เลื่อนการอัปเดต State
+    const timer = setTimeout(() => {
+      const shuffled = [...ALL_SAMPLES].sort(() => 0.5 - Math.random());
+      setRandomSamples(shuffled.slice(0, 3));
+      setIsMounted(true); // บอกว่าสุ่มเสร็จแล้ว พร้อมโชว์!
+    }, 0);
+
+    // คลีนอัพ timer ด้วยเสมอ
+    return () => clearTimeout(timer);
+  }, []);
 
   // ฟังก์ชันยิงข้อมูลไปหา API หลังบ้าน
   const handleAnalyze = async () => {
@@ -152,17 +163,19 @@ export default function Home() {
                   <div className="h-px bg-neutral-300 flex-1" />
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  {SAMPLE_TEXTS.map((sample, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setInputText(sample)}
-                      className="text-left text-[11px] bg-white/60 border border-neutral-200 hover:border-neutral-400 text-neutral-600 px-4 py-3 rounded-2xl transition active:scale-[0.98] cursor-pointer shadow-sm"
-                    >
-                      {sample}
-                    </button>
-                  ))}
+                {/* ล็อกความสูงขั้นต่ำไว้ (min-h-[140px]) ป้องกันหน้าจอกระตุกตอนปุ่มโผล่มา */}
+                <div className="flex flex-col gap-2 min-h-[140px]">
+                  {isMounted &&
+                    randomSamples.map((sample, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setInputText(sample)}
+                        className="text-left text-[11px] bg-white/60 border border-neutral-200 hover:border-neutral-400 text-neutral-600 px-4 py-3 rounded-2xl transition active:scale-[0.98] cursor-pointer shadow-sm animate-in fade-in duration-500"
+                      >
+                        {sample}
+                      </button>
+                    ))}
                 </div>
               </div>
             </div>
