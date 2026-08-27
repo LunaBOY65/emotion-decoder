@@ -81,23 +81,7 @@ export default function Home() {
       {/* พื้นหลังเปลี่ยนสีตามอารมณ์ (ถ้าหน้าแรกให้ใช้สีขาวอมเทา #F9FAFB) */}
       <AtmosphericBg color={activeEmotion?.color || "#F9FAFB"} />
       {/* จำกัดขนาดหน้าจอให้พอดีมือถือ (Mobile-First Frame) */}
-      <div className="w-full max-w-md flex flex-col justify-between py-6">
-        {/* 1. ส่วนหัว (Header) */}
-        <header className="flex items-center justify-between mb-6 pt-4">
-          {result ? (
-            <button
-              onClick={handleReset}
-              aria-label="ปิด"
-              className="w-8 h-8 flex items-center justify-center text-neutral-700/70 hover:text-neutral-900 transition"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          ) : (
-            <span className="w-8" /> // เว้นที่ว่างไว้ให้ชื่ออยู่กึ่งกลางเสมอ
-          )}
-          <span className="w-8" />
-        </header>
-
+      <div className="w-full max-w-md flex flex-col justify-between">
         {/* 2. เนื้อหาหลักตามสถานะ */}
         <div className="flex-1 flex flex-col justify-center">
           {/* สเต็ปที่ 1: กำลังโหลด (Loading State) */}
@@ -109,7 +93,7 @@ export default function Home() {
                 className="text-neutral-700 mx-auto"
               />
               <p className="text-sm text-neutral-600 font-medium">
-                กำลังตั้งใจฟังความรู้สึกของคุณ...
+                กำลังวิเคราะห์ความรู้สึกของคุณ...
               </p>
             </div>
           )}
@@ -179,25 +163,15 @@ export default function Home() {
 
           {/* สเต็ปที่ 3: หน้าแสดงผลลัพธ์ (Result State) */}
           {!isLoading && result && (
-            <div className="flex flex-col h-full items-center justify-center space-y-8 animate-in fade-in zoom-in-95 duration-500">
-              {/* ใช้ ShareCard เป็นตัวแสดงผลหลักตัวเดียวจบ */}
-              <div className="w-full">
-                <ShareCard
-                  result={result}
-                  color={activeEmotion?.color || "#14B8A6"}
-                  mouth={activeEmotion?.mouth ?? "smile"}
-                  angry={activeEmotion?.angry}
-                />
-              </div>
-
-              {/* ปุ่มรีเซ็ต ปรับสีให้ดูซอฟต์ลงเป็นปุ่มรอง (Secondary Button) ไม่แย่งซีนปุ่มดาวน์โหลดรูป */}
-              <button
-                onClick={handleReset}
-                className="w-full max-w-[300px] py-3.5 bg-white border border-neutral-200 text-neutral-600 text-sm font-medium rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-50 active:scale-[0.98] transition shadow-sm cursor-pointer"
-              >
-                <RotateCcw className="w-4 h-4" />
-                <span>เริ่มวิเคราะห์ใหม่อีกครั้ง</span>
-              </button>
+            <div className="flex flex-col h-full w-full animate-in fade-in zoom-in-95 duration-500">
+              {/* ให้ ShareCard ควบคุมพื้นที่ความสูงทั้งหมดด้วยตัวเอง */}
+              <ShareCard
+                result={result}
+                color={activeEmotion?.color || "#14B8A6"}
+                mouth={activeEmotion?.mouth ?? "smile"}
+                angry={activeEmotion?.angry}
+                onReset={handleReset}
+              />
             </div>
           )}
         </div>

@@ -4,7 +4,7 @@
 import { useRef, useState } from "react";
 import { EmotionResult } from "@/types/emotion";
 import { toPng } from "html-to-image";
-import { Download } from "lucide-react";
+import { Download, RotateCcw } from "lucide-react";
 import MoodFace, { MouthType } from "@/components/visualizer/MoodFace";
 
 interface ShareCardProps {
@@ -12,6 +12,7 @@ interface ShareCardProps {
   color: string;
   mouth?: MouthType;
   angry?: boolean;
+  onReset: () => void;
 }
 
 export default function ShareCard({
@@ -19,6 +20,7 @@ export default function ShareCard({
   color,
   mouth = "smile",
   angry,
+  onReset,
 }: ShareCardProps) {
   // สร้างตัวอ้างอิง (Ref) เพื่อบอกให้ html-to-image รู้ว่าจะแคปกล่องไหน
   const cardRef = useRef<HTMLDivElement>(null);
@@ -45,12 +47,13 @@ export default function ShareCard({
   };
 
   return (
-    <div className="space-y-4 pt-2">
-      {/* ================= กรอบการ์ดสัดส่วน 9:16 (IG Story Style) ================= */}
-      <div className="flex justify-center">
+    <div className="flex flex-col h-full w-full pb-2">
+      {/* ================= กรอบการ์ดสัดส่วน 9:16 ================= */}
+      {/* flex-1 จะดันให้การ์ดขยายเต็มพื้นที่ที่เหลือและอยู่ตรงกลาง */}
+      <div className="flex-1 flex flex-col justify-center items-center">
         <div
           ref={cardRef}
-          className="w-full max-w-[300px] aspect-[9/16] rounded-3xl p-5 flex flex-col justify-between relative overflow-hidden"
+          className="w-full max-w-[320px] aspect-[9/16] rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden shrink-0"
           style={{ backgroundColor: color }}
         >
           {/* ส่วนหัวของการ์ด */}
@@ -63,8 +66,8 @@ export default function ShareCard({
             </span>
           </div>
 
-          {/* ส่วนกลาง: ไฮไลต์ความรู้สึกที่แท้จริง */}
-          <div className="relative z-10 space-y-3 my-auto">
+          {/* ส่วนกลาง: จัด Layout ชิดซ้ายเหมือนในรูปเป๊ะๆ */}
+          <div className="relative z-10 flex flex-col justify-center h-full space-y-3 text-left my-auto mt-6">
             <MoodFace
               mouth={mouth}
               angry={angry}
@@ -72,16 +75,16 @@ export default function ShareCard({
               className="text-neutral-900"
             />
 
-            <div className="text-[11px] text-neutral-900/60 pt-1">
+            <div className="text-[11px] text-neutral-900/60 pt-1 font-medium">
               {result.layer_1_core} → {result.layer_2_secondary}
             </div>
 
-            <h3 className="text-xl font-black text-neutral-900 leading-snug">
+            <h3 className="text-[22px] font-black text-neutral-900 leading-snug">
               &ldquo;{result.layer_3_specific}&rdquo;
             </h3>
 
-            <div className="p-3 rounded-xl bg-white/50">
-              <p className="text-[11px] text-neutral-900/80 leading-relaxed">
+            <div className="p-4 mt-2 rounded-2xl bg-white/40 border border-white/20">
+              <p className="text-[11.5px] text-neutral-900/80 leading-relaxed">
                 {result.underlying_cause}
               </p>
             </div>
@@ -93,7 +96,7 @@ export default function ShareCard({
               <span className="text-[10px] text-neutral-900/50 block font-medium">
                 คำแนะนำใน 5 นาที
               </span>
-              <p className="text-[11px] text-neutral-900 line-clamp-2">
+              <p className="text-[11px] text-neutral-900 leading-snug line-clamp-3">
                 {result.micro_action}
               </p>
             </div>
@@ -106,16 +109,22 @@ export default function ShareCard({
       </div>
 
       {/* ================= ปุ่มกดดาวน์โหลดรูปภาพ ================= */}
-      <div>
+      {/* mt-auto จะผลักกลุ่มปุ่มกดนี้ลงไปชิดด้านล่างสุดของจอ */}
+      <div className="space-y-3 w-full max-w-[320px] mx-auto mt-auto pt-6">
         <button
           onClick={handleDownloadImage}
           disabled={isExporting}
-          className="w-full py-3.5 rounded-xl bg-neutral-900 text-white font-medium text-sm flex items-center justify-center gap-2 hover:bg-neutral-800 active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
+          className="w-full py-4 rounded-2xl bg-[#1A1A1A] text-white font-medium text-sm flex items-center justify-center gap-2 hover:bg-black active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
         >
-          <Download className="w-4 h-4" />
-          <span>
-            {isExporting ? "กำลังบันทึกรูป..." : "บันทึกการ์ดรูปภาพ (PNG)"}
-          </span>
+          <Download className="w-5 h-5" />
+          <span>{isExporting ? "กำลังบันทึกรูป..." : "บันทึกรูปภาพ"}</span>
+        </button>
+        <button
+          onClick={onReset}
+          className="w-full py-4 rounded-2xl bg-white/80 backdrop-blur-sm text-neutral-800 font-medium text-sm flex items-center justify-center gap-2 hover:bg-white active:scale-[0.98] transition cursor-pointer"
+        >
+          <RotateCcw className="w-5 h-5" />
+          <span>วิเคราะห์ใหม่อีกครั้ง</span>
         </button>
       </div>
     </div>
