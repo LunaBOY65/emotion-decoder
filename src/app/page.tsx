@@ -99,64 +99,71 @@ export default function Home() {
           )}
 
           {!isLoading && !result && (
-            <div className="flex flex-col h-full pb-4">
-              {/* คาแรกเตอร์คอยฟังอยู่ด้านบน ทำให้แอปดูมีชีวิตชีวา ไม่ใช่แค่กล่องขาวๆ */}
-              <div className="flex flex-col items-center text-center mt-2 mb-8">
-                {/* <MoodFace
-                  mouth="smile"
-                  size={72}
-                  className="text-neutral-800 mb-4"
-                /> */}
+            <div className="flex flex-col justify-center h-full pb-8">
+              {/* 1. ส่วนหัวข้อ */}
+              <div className="text-center mb-6 space-y-2">
                 <h2 className="text-2xl font-black tracking-tight text-neutral-900">
                   วันนี้คุณรู้สึกอย่างไร?
                 </h2>
+                <p className="text-[12px] text-neutral-500">
+                  พื้นที่ระบายความรู้สึกของคุณ
+                </p>
               </div>
 
-              <div className="flex-1" />
+              {/* 2. กล่องข้อความสไตล์สมุดโน้ต (อยู่ตรงกลาง พิมพ์ง่ายบนมือถือ) */}
+              <div className="bg-white rounded-3xl p-3 shadow-sm border border-neutral-200 flex flex-col focus-within:border-neutral-400 focus-within:shadow-md transition-all mb-3 relative">
+                <textarea
+                  className="w-full bg-transparent resize-none outline-none text-neutral-800 text-sm px-3 py-2 min-h-[130px] placeholder:text-neutral-400 leading-relaxed"
+                  placeholder="พิมพ์ความรู้สึกของคุณที่นี่..."
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                />
 
-              {/* แถบข้อความตัวอย่าง (ทำเป็นปุ่มมนๆ วางซ้อนกัน) */}
-              <div className="mb-6 space-y-3">
-                <span className="text-[12px] text-neutral-600 font-medium">
-                  ลองแตะข้อความตัวอย่าง:
-                </span>
-                <div className="flex flex-wrap gap-2">
+                {/* แถบด้านล่างกล่อง: แสดงจำนวนตัวอักษร + ปุ่มส่ง */}
+                <div className="flex justify-between items-end mt-2">
+                  <span className="text-[10px] text-neutral-400 pl-3 pb-2 font-medium">
+                    {inputText.length > 0
+                      ? `${inputText.length} ตัวอักษร`
+                      : "พร้อมรับฟังเสมอ"}
+                  </span>
+                  <button
+                    onClick={handleAnalyze}
+                    disabled={!inputText.trim()}
+                    className="w-12 h-12 shrink-0 bg-neutral-900 text-white rounded-2xl flex items-center justify-center disabled:opacity-30 disabled:bg-neutral-300 hover:bg-neutral-800 transition-all active:scale-95 cursor-pointer"
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {errorMsg && (
+                <p className="text-xs text-red-500 text-center mb-3 bg-red-50 py-2 rounded-xl">
+                  {errorMsg}
+                </p>
+              )}
+
+              {/* 3. ข้อความตัวอย่าง (ย้ายมาล่างสุด เพื่อเป็นแค่ตัวเลือกเสริม) */}
+              <div className="mt-4">
+                <div className="flex items-center gap-3 mb-4 opacity-60">
+                  <div className="h-px bg-neutral-300 flex-1" />
+                  <span className="text-[10px] text-neutral-500 font-medium">
+                    หรือเลือกจากข้อความตัวอย่าง
+                  </span>
+                  <div className="h-px bg-neutral-300 flex-1" />
+                </div>
+
+                <div className="flex flex-col gap-2">
                   {SAMPLE_TEXTS.map((sample, idx) => (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => setInputText(sample)}
-                      className="text-left text-xs bg-white border border-neutral-200 hover:border-neutral-400 text-neutral-700 px-4 py-2.5 rounded-full transition active:scale-95 cursor-pointer"
+                      className="text-left text-[11px] bg-white/60 border border-neutral-200 hover:border-neutral-400 text-neutral-600 px-4 py-3 rounded-2xl transition active:scale-[0.98] cursor-pointer shadow-sm"
                     >
                       {sample}
                     </button>
                   ))}
                 </div>
-              </div>
-
-              {errorMsg && (
-                <p className="text-xs text-red-500 text-center mb-2">
-                  {errorMsg}
-                </p>
-              )}
-
-              {/* กล่องพิมพ์ข้อความสไตล์แชท มีปุ่มส่งกลมๆ ซ่อนอยู่ข้างในขวา */}
-              <div className="bg-white rounded-3xl p-2 pr-2 shadow-sm border border-neutral-200 flex items-end focus-within:border-neutral-400 transition">
-                <textarea
-                  className="w-full bg-transparent resize-none outline-none text-neutral-800 text-sm px-4 py-3 max-h-32 placeholder:text-neutral-400"
-                  rows={2}
-                  placeholder="พิมพ์ระบายความรู้สึกที่นี่..."
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                />
-
-                {/* ปุ่มส่งข้อความแบบไอคอนกลมเล็กๆ */}
-                <button
-                  onClick={handleAnalyze}
-                  disabled={!inputText.trim()}
-                  className="w-11 h-11 mb-1 shrink-0 bg-neutral-900 text-white rounded-full flex items-center justify-center disabled:opacity-30 disabled:bg-neutral-400 transition active:scale-95 cursor-pointer"
-                >
-                  <ArrowRight className="w-5 h-5" />
-                </button>
               </div>
             </div>
           )}
