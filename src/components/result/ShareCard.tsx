@@ -48,8 +48,7 @@ export default function ShareCard({
 
   return (
     <div className="flex flex-col h-full w-full pb-2">
-      {/* ================= กรอบการ์ดสัดส่วน 9:16 ================= */}
-      {/* flex-1 จะดันให้การ์ดขยายเต็มพื้นที่ที่เหลือและอยู่ตรงกลาง */}
+      {/* กรอบการ์ดสัดส่วน 9:16 */}
       <div className="flex-1 flex flex-col justify-center items-center">
         <div
           ref={cardRef}
@@ -66,7 +65,7 @@ export default function ShareCard({
             </span>
           </div>
 
-          {/* ส่วนกลาง: จัด Layout ชิดซ้ายเหมือนในรูปเป๊ะๆ */}
+          {/* จัด Layout ชิดซ้าย */}
           <div className="relative z-10 flex flex-col justify-center h-full space-y-3 text-left my-auto mt-6">
             <MoodFace
               mouth={mouth}
@@ -90,7 +89,7 @@ export default function ShareCard({
             </div>
           </div>
 
-          {/* ส่วนล่าง: คำแนะนำสั้นๆ และ Branding */}
+          {/* คำแนะนำสั้นๆ */}
           <div className="relative z-10 space-y-3 pt-2 border-t border-neutral-900/15">
             <div>
               <span className="text-[10px] text-neutral-900/50 block font-medium">
@@ -108,8 +107,7 @@ export default function ShareCard({
         </div>
       </div>
 
-      {/* ================= ปุ่มกดดาวน์โหลดรูปภาพ ================= */}
-      {/* mt-auto จะผลักกลุ่มปุ่มกดนี้ลงไปชิดด้านล่างสุดของจอ */}
+      {/*  ปุ่มกด */}
       <div className="space-y-3 w-full max-w-[320px] mx-auto mt-auto pt-6">
         <button
           onClick={handleDownloadImage}

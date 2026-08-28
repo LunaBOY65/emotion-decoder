@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_Thai } from "next/font/google"; // 1. นำเข้าฟอนต์ภาษาไทย
 import "./globals.css";
 
-// 2. ตั้งค่าฟอนต์ Noto Sans Thai ให้ดูทันสมัย
+// ตั้งค่าฟอนต์ Noto Sans Thai
 const notoSansThai = Noto_Sans_Thai({
   subsets: ["thai", "latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -12,7 +12,7 @@ const notoSansThai = Noto_Sans_Thai({
 
 export const metadata: Metadata = {
   title: "Current Mood",
-  description: "ถอดรหัสความรู้สึกที่ไม่รู้จะอธิบายอย่างไร",
+  description: "เข้าใจความรู้สึกตัวเองที่ไม่รู้จะอธิบายอย่างไร",
 };
 
 export default function RootLayout({

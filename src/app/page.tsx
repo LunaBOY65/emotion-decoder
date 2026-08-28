@@ -81,7 +81,7 @@ export default function Home() {
         ) as CoreEmotionType;
 
         if (matchedKey) {
-          data.layer_1_core = matchedKey; // แก้ที่ data ได้เลยเพราะยังไม่ลง State
+          data.layer_1_core = matchedKey;
         }
       }
 
@@ -116,7 +116,7 @@ export default function Home() {
       <div className="w-full max-w-md flex flex-col justify-between">
         {/* 2. เนื้อหาหลักตามสถานะ */}
         <div className="flex-1 flex flex-col justify-center">
-          {/* สเต็ปที่ 1: กำลังโหลด (Loading State) */}
+          {/* Loading State */}
           {isLoading && (
             <div className="text-center space-y-4 animate-pulse">
               <MoodFace
@@ -124,7 +124,6 @@ export default function Home() {
                 size={72}
                 className="text-neutral-700 mx-auto"
               />
-              {/* แสดงข้อความที่สลับไปมา พร้อมคลาส animate-in เพื่อให้เฟดนุ่มๆ */}
               <p
                 key={loadingTextIdx}
                 className="text-sm text-neutral-600 font-medium animate-in fade-in zoom-in-95 duration-300"
@@ -136,7 +135,6 @@ export default function Home() {
 
           {!isLoading && !result && (
             <div className="flex flex-col justify-center h-full pb-8">
-              {/* 1. ส่วนหัวข้อ */}
               <div className="text-center mb-6 space-y-2">
                 <h2 className="text-2xl font-black tracking-tight text-neutral-900">
                   วันนี้คุณรู้สึกอย่างไร?
@@ -146,7 +144,7 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* 2. กล่องข้อความสไตล์สมุดโน้ต (อยู่ตรงกลาง พิมพ์ง่ายบนมือถือ) */}
+              {/* กล่องข้อความ */}
               <div className="bg-white rounded-3xl p-3 shadow-sm border border-neutral-200 flex flex-col focus-within:border-neutral-400 focus-within:shadow-md transition-all mb-3 relative">
                 {/* ปุ่ม X สำหรับล้างข้อความ จะโชว์เฉพาะตอนที่มีตัวอักษร */}
                 {inputText.length > 0 && (
@@ -166,7 +164,7 @@ export default function Home() {
                   onChange={(e) => setInputText(e.target.value)}
                 />
 
-                {/* แถบด้านล่างกล่อง: แสดงจำนวนตัวอักษร + ปุ่มส่ง */}
+                {/* กล่อง แสดงจำนวนตัวอักษร + ปุ่มส่ง */}
                 <div className="flex justify-between items-end mt-2">
                   <span className="text-[10px] text-neutral-400 pl-3 pb-2 font-medium">
                     {inputText.length > 0
@@ -189,7 +187,7 @@ export default function Home() {
                 </p>
               )}
 
-              {/* 3. ข้อความตัวอย่าง (ย้ายมาล่างสุด เพื่อเป็นแค่ตัวเลือกเสริม) */}
+              {/* ข้อความตัวอย่าง */}
               <div className="mt-4">
                 <div className="flex items-center gap-3 mb-4 opacity-60">
                   <div className="h-px bg-neutral-300 flex-1" />
@@ -217,7 +215,7 @@ export default function Home() {
             </div>
           )}
 
-          {/* สเต็ปที่ 3: หน้าแสดงผลลัพธ์ (Result State) */}
+          {/* หน้าแสดงผลลัพธ์ (Result State) */}
           {!isLoading && result && (
             <div className="flex flex-col h-full w-full animate-in fade-in zoom-in-95 duration-500">
               {/* ให้ ShareCard ควบคุมพื้นที่ความสูงทั้งหมดด้วยตัวเอง */}
