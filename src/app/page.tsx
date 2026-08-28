@@ -5,11 +5,16 @@
 import { useState, useEffect } from "react";
 import { EmotionResult } from "@/types/emotion";
 import { CORE_EMOTIONS, CoreEmotionType } from "@/constants/emotionsData";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, X } from "lucide-react";
 import ShareCard from "@/components/result/ShareCard";
 import AtmosphericBg from "@/components/visualizer/AtmosphericBg";
 import MoodFace from "@/components/visualizer/MoodFace";
 import { ALL_SAMPLES } from "@/constants/sampleTexts";
+
+const loadingMessages = [
+  "กำลังวิเคราะห์ความรู้สึกของคุณ..",
+  "ใกล้เสร็จแล้ว...",
+];
 
 export default function Home() {
   const [inputText, setInputText] = useState("");
@@ -20,6 +25,9 @@ export default function Home() {
   // กำหนดเป็นค่าว่างไว้ก่อน
   const [randomSamples, setRandomSamples] = useState<string[]>([]);
   const [isMounted, setIsMounted] = useState(false); // เอาไว้เช็คว่าสุ่มเสร็จหรือยัง
+
+  // ชุดข้อความ Loading ที่จะเล่นสลับกันไปมา
+  const [loadingTextIdx, setLoadingTextIdx] = useState(0);
 
   // สุ่มข้อความเมื่อหน้าเว็บโหลดเสร็จ
   useEffect(() => {
@@ -33,6 +41,19 @@ export default function Home() {
     // คลีนอัพ timer ด้วยเสมอ
     return () => clearTimeout(timer);
   }, []);
+
+  // สลับข้อความ Loading ทุกๆ 1.8 วินาที
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isLoading) {
+      interval = setInterval(() => {
+        setLoadingTextIdx((prev) => (prev + 1) % loadingMessages.length);
+      }, 3000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   // ฟังก์ชันยิงข้อมูลไปหา API หลังบ้าน
   const handleAnalyze = async () => {
@@ -103,8 +124,12 @@ export default function Home() {
                 size={72}
                 className="text-neutral-700 mx-auto"
               />
-              <p className="text-sm text-neutral-600 font-medium">
-                กำลังวิเคราะห์ความรู้สึกของคุณ...
+              {/* แสดงข้อความที่สลับไปมา พร้อมคลาส animate-in เพื่อให้เฟดนุ่มๆ */}
+              <p
+                key={loadingTextIdx}
+                className="text-sm text-neutral-600 font-medium animate-in fade-in zoom-in-95 duration-300"
+              >
+                {loadingMessages[loadingTextIdx]}
               </p>
             </div>
           )}
@@ -117,14 +142,25 @@ export default function Home() {
                   วันนี้คุณรู้สึกอย่างไร?
                 </h2>
                 <p className="text-[12px] text-neutral-500">
-                  พื้นที่ระบายความรู้สึกของคุณ
+                  พื้นที่เข้าใจความรู้สึกของคุณ
                 </p>
               </div>
 
               {/* 2. กล่องข้อความสไตล์สมุดโน้ต (อยู่ตรงกลาง พิมพ์ง่ายบนมือถือ) */}
               <div className="bg-white rounded-3xl p-3 shadow-sm border border-neutral-200 flex flex-col focus-within:border-neutral-400 focus-within:shadow-md transition-all mb-3 relative">
+                {/* ปุ่ม X สำหรับล้างข้อความ จะโชว์เฉพาะตอนที่มีตัวอักษร */}
+                {inputText.length > 0 && (
+                  <button
+                    onClick={() => setInputText("")}
+                    className="absolute top-4 right-4 w-7 h-7 bg-neutral-100 hover:bg-neutral-200 text-neutral-500 rounded-full flex items-center justify-center transition-colors active:scale-95 cursor-pointer"
+                    aria-label="ล้างข้อความ"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+
                 <textarea
-                  className="w-full bg-transparent resize-none outline-none text-neutral-800 text-sm px-3 py-2 min-h-[130px] placeholder:text-neutral-400 leading-relaxed"
+                  className="w-full bg-transparent resize-none outline-none text-neutral-800 text-sm px-3 py-2 pr-10 min-h-[130px] placeholder:text-neutral-400 leading-relaxed"
                   placeholder="พิมพ์ความรู้สึกของคุณที่นี่..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
