@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
     // ให้ Gemini ตอบกลับเป็น JSON เสมอ
     const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: "gemini-3.1-flash-lite",
       contents: prompt,
       config: {
         temperature: 0.2,
