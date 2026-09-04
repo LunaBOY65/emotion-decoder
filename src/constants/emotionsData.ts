@@ -33,7 +33,7 @@ export const CORE_EMOTIONS = {
     mouth: "zigzag",
     angry: false,
   },
-  เสียใจ: {
+  เศร้า: {
     color: "#BAE6FD", // สีฟ้าพาสเทล
     bgClass: "bg-[#BAE6FD] text-neutral-900",
     mouth: "frown",
