@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="th">
+    <html lang="th" suppressHydrationWarning>
       {/* เรียกใช้ฟอนต์ที่เตรียมไว้ และเปลี่ยนพื้นหลังเป็นสีสว่าง (bg-neutral-50) */}
       <body
         className={`${notoSansThai.className} bg-neutral-50 text-neutral-900 antialiased min-h-screen`}

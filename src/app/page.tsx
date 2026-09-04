@@ -158,6 +158,7 @@ export default function Home() {
                 )}
 
                 <textarea
+                  suppressHydrationWarning
                   className="w-full bg-transparent resize-none outline-none text-neutral-800 text-sm px-3 py-2 pr-10 min-h-[130px] placeholder:text-neutral-400 leading-relaxed"
                   placeholder="พิมพ์ความรู้สึกของคุณที่นี่..."
                   value={inputText}

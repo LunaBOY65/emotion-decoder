@@ -26,18 +26,77 @@ export default function ShareCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
 
-  // 1. ฟังก์ชันดาวน์โหลดเป็นไฟล์รูปภาพ (.png)
+  // ดาวน์โหลดเป็นไฟล์รูปภาพ (.png)
   const handleDownloadImage = async () => {
     if (!cardRef.current) return;
     setIsExporting(true);
 
     try {
-      // แปลง DOM กล่องการ์ดให้เป็น Data URL รูปภาพ
-      const dataUrl = await toPng(cardRef.current, { cacheBust: true });
-      const link = document.createElement("a");
-      link.download = `emotion-${result.layer_1_core}.png`;
-      link.href = dataUrl;
-      link.click();
+      // --- ทริคสำหรับ iOS Safari ---
+      // กระตุ้นให้ Safari โหลดฟอนต์และ Asset ต่างๆ ก่อน 1 รอบ (ป้องกันบั๊กได้รูปเปล่า)
+      await toPng(cardRef.current, { cacheBust: true, pixelRatio: 2 });
+
+      // แคปเจอร์จริงในรอบที่ 2
+      const dataUrl = await toPng(cardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+      });
+      const fileName = `emotion-${result.layer_1_core}.png`;
+
+      // ตรวจสอบว่าเบราว์เซอร์รองรับ Web Share API ไหม
+      if (navigator.share) {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], fileName, { type: "image/png" });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: "วันนี้คุณรู้สึกอย่างไร?",
+            });
+            return; // ถ้าเรียกหน้าต่างแชร์สำเร็จ จบการทำงานเลย
+          } catch (shareError) {
+            // ถ้าผู้ใช้กดยกเลิกการแชร์ (ไม่มีปัญหา)
+            if (
+              shareError instanceof Error &&
+              shareError.name === "AbortError"
+            ) {
+              console.log("ผู้ใช้ยกเลิกการแชร์");
+              return;
+            }
+            // ถ้าแชร์พัง (ถูกบล็อก) ปล่อยให้มันไหลไปใช้ Fallback ด้านล่าง
+            console.warn("Share API ถูกบล็อก, กำลังสลับไปใช้วิธีดาวน์โหลดปกติ");
+          }
+        }
+      }
+
+      // --- Fallback สำหรับ Desktop และ iOS ที่แชร์ไม่ได้ ---
+      // ตรวจสอบว่าเป็นอุปกรณ์ iOS หรือไม่
+      const isIOS =
+        /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
+
+      if (isIOS) {
+        // สำหรับ iOS Safari ถ้าโหลดแบบปกติไม่ได้ ให้เปิดรูปในแท็บใหม่
+        // เพื่อให้ผู้ใช้สามารถกดค้าง (Long Press) แล้วเลือก "Save Image" ได้
+        const newWindow = window.open();
+        if (newWindow) {
+          newWindow.document.write(
+            `<img src="${dataUrl}" alt="Emotion Card" style="width:100%; border-radius: 12px; margin-top: 20px;" />`,
+          );
+          newWindow.document.write(
+            `<p style="text-align:center; font-family:sans-serif; color:#666;">กดค้างที่รูปภาพเพื่อบันทึกลงเครื่อง</p>`,
+          );
+        } else {
+          // ถ้าโดนบล็อก Pop-up เปลี่ยนหน้าปัจจุบันไปที่รูปเลย
+          window.location.href = dataUrl;
+        }
+      } else {
+        // สำหรับ Android และ Desktop ใช้วิธีคลิกลิงก์ปกติได้เลย
+        const link = document.createElement("a");
+        link.download = fileName;
+        link.href = dataUrl;
+        link.click();
+      }
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการสร้างรูป:", error);
       alert("ไม่สามารถบันทึกรูปภาพได้ในขณะนี้");
