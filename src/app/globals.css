@@ -2,3 +2,24 @@
 /* Tailwind animations & color tokens */
 
 @import "tailwindcss";
+/* ใช้ได้ช่างมัน */
+@custom-variant dark (&:is(.dark *));
+
+m .dark {
+  --bg-primary: #0f172a; /* พื้นหลังหลัก (เทาเข้ม) */
+  --bg-card: #1e293b; /* พื้นหลังการ์ด */
+  --text-primary: #f1f5f9; /* ตัวอักษรหลัก */
+  --text-secondary: #94a3b8; /* ตัวอักษรรอง */
+  --border-color: #334155; /* สีขอบ */
+}
+
+/* สีพื้นฐาน */
+body {
+  background-color: #f9fafb;
+  transition: background-color 0.3s ease;
+}
+
+/* เมื่อเปิด Dark Mode */
+body.dark {
+  background-color: var(--bg-primary);
+}
