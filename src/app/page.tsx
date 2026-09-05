@@ -5,7 +5,7 @@
 import { useState, useEffect } from "react";
 import { EmotionResult } from "@/types/emotion";
 import { CORE_EMOTIONS, CoreEmotionType } from "@/constants/emotionsData";
-import { ArrowRight, X } from "lucide-react";
+import { ArrowRight, X, Sun, Moon } from "lucide-react";
 import ShareCard from "@/components/result/ShareCard";
 import AtmosphericBg from "@/components/visualizer/AtmosphericBg";
 import MoodFace from "@/components/visualizer/MoodFace";
@@ -39,6 +39,17 @@ export default function Home() {
       setIsDark(false);
     }
   };
+
+  // บังคับให้หน้า Result กลับไปเป็นโหมดปกติ (ลบคลาส dark ชั่วคราว)
+  useEffect(() => {
+    if (result) {
+      // ถ้ามีผลลัพธ์ (อยู่หน้า Result) ให้ถอดคลาส dark ออก
+      document.documentElement.classList.remove("dark");
+    } else if (isDark) {
+      // ถ้าไม่มีผลลัพธ์ (อยู่หน้าแรก) และผู้ใช้เคยกดเปิดโหมดมืดไว้ ให้ใส่คลาส dark กลับคืนมา
+      document.documentElement.classList.add("dark");
+    }
+  }, [result, isDark]);
 
   // สุ่มข้อความเมื่อหน้าเว็บโหลดเสร็จ
   useEffect(() => {
@@ -121,24 +132,39 @@ export default function Home() {
     : null;
 
   return (
-    <main
-      className={`min-h-screen text-neutral-800 dark:text-neutral-100 flex justify-center p-4 relative ${isDark ? "dark bg-[#0f172a]" : "bg-[#f9fafb]"}`}
-    >
-      {/* พื้นหลังเปลี่ยนสีตามอารมณ์ (ถ้าหน้าแรกให้ใช้สีขาวอมเทา #F9FAFB) */}
+    <main className="min-h-screen text-neutral-800 flex justify-center p-4 relative">
       <AtmosphericBg
         color={activeEmotion?.color || (isDark ? "#0F172A" : "#F9FAFB")}
       />
-      {/* จำกัดขนาดหน้าจอให้พอดีมือถือ (Mobile-First Frame) */}
+      {/* จำกัดขนาดหน้าจอให้พอดีมือถือ */}
       <div className="w-full max-w-md flex flex-col justify-between">
-        {/* ปุ่มสลับ Dark Mode */}
-        <button
-          onClick={toggleDarkMode}
-          className="absolute top-4 right-4 w-10 h-10 bg-white dark:bg-gray-800 text-neutral-600 dark:text-neutral-300 rounded-full shadow-md flex items-center justify-center hover:scale-110 transition-all z-20 cursor-pointer"
-          aria-label="สลับโหมดมืด/สว่าง"
-        >
-          {isDark ? "🌙" : "☀️"}
-        </button>
-        {/* 2. เนื้อหาหลักตามสถานะ */}
+        {/* ปุ่มสลับ Dark Mode แบบแคปซูล (Pill Toggle) ตอนที่กำลังโชว์ผลลัพธ์ */}{" "}
+        {!result && (
+          <button
+            onClick={toggleDarkMode}
+            className="absolute top-4 right-4 w-[72px] h-[36px] bg-white dark:bg-gray-800 rounded-full shadow-md flex items-center p-1 cursor-pointer transition-colors z-20"
+            aria-label="สลับโหมดมืด/สว่าง"
+          >
+            {/* วงกลม (Thumb) เปลี่ยนสีและเลื่อนซ้าย-ขวา */}
+            <div
+              className={`absolute w-7 h-7 rounded-full transition-all duration-300 ease-in-out ${
+                isDark
+                  ? "translate-x-[36px] bg-blue-600"
+                  : "translate-x-0 bg-amber-500"
+              }`}
+            />
+            {/* กล่องใส่ไอคอน */}
+            <div className="flex w-full justify-between items-center px-[6px] z-10">
+              <Sun
+                className={`w-4 h-4 transition-colors duration-300 ${isDark ? "text-neutral-400" : "text-white"}`}
+              />
+              <Moon
+                className={`w-4 h-4 transition-colors duration-300 ${isDark ? "text-white" : "text-neutral-400"}`}
+              />
+            </div>
+          </button>
+        )}
+        {/* เนื้อหาหลักตามสถานะ */}
         <div className="flex-1 flex flex-col justify-center">
           {/* Loading State */}
           {isLoading && (
@@ -254,7 +280,6 @@ export default function Home() {
             </div>
           )}
         </div>
-
         {/* 3. ส่วนท้าย (Footer) */}
         <footer className="text-center text-[10px] text-neutral-500 dark:text-neutral-400 mt-6 pb-2">
           เราไม่เก็บข้อมูลของคุณ สบายใจได้นะ 🤍
